@@ -1,10 +1,12 @@
-### Subtyping and Variance in Rust
+# Subtyping and Variance in Rust
 
 ## Subtyping
 
+```rust
 trait Animal {}
 trait Cat: Animal {}
 trait Dog: Animal {}
+```
 
 Cat is a subtype of Animal, and Animal is supertype to Cat.
 Within safe Rust, the compiler will take care of corner cases,
@@ -12,6 +14,7 @@ but in unsafe code, you can get a meowing dog (i.e., UB).
 
 Applying subtyping in a naive way using "find and replace"...
 
+```rust
 fn evil_feeder(pet: &mut Animal) {
     let spike: Dog = ...;
 
@@ -25,6 +28,7 @@ fn main() {
     evil_feeder(&mut mr_snuggles);  // Replaces mr_snuggles with a Dog
     mr_snuggles.meow();             // OH NO, MEOWING DOG!
 }
+```
 
 We need something more robust... Variance.
 
@@ -33,26 +37,29 @@ We need something more robust... Variance.
 Subtyping occurs in lifetimes in Rust.
 
 'big: 'small (big outlives small / big contains small)
-    'big is a subtype fo 'small
-        Think of: Cat is an Animal and more... 'big is 'small and more.
+
+    1. 'big is a subtype fo 'small
+    2. Think of: Cat is an Animal and more... 'big is 'small and more.
+
 If someone wants a reference for 'small, they mean a reference that lives
 at least 'small. So, it's ok to forget somethings lives 'big and just
 remember it lives 'small. Meowing dog happens when 'small is used when
-'big, creating a danglig reference.
+'big actually needed, creating a dangling reference.
 
 Lifetime is not a type... so to apply liftime subtyping...
 
 ## Variance
 
-1. Type constructor (F<T>) -> any generic type with unbound arguments.
-    Vec: type T
-    & and &mut: lifetime and pointer to type
+Type constructor (F<T>) -> any generic type with unbound arguments.
 
-2. Three variance in Rust
+    * Vec: type T
+    * & and &mut: lifetime and pointer to type
 
-    Sub is subtype of Super
-    Sub: Super
-    'big: 'small
+Three variance in Rust
+
+    * Sub is subtype of Super
+    * Sub: Super
+    * 'big: 'small
 
     1. covariance
     2. contravariance

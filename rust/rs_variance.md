@@ -3,6 +3,7 @@
 ## Subtyping
 
 ```rust
+// This is psuedo-rust code
 trait Animal {}
 trait Cat: Animal {}
 trait Dog: Animal {}
@@ -38,7 +39,7 @@ Subtyping occurs in lifetimes in Rust.
 
 'big: 'small (big outlives small / big contains small)
 
-    1. 'big is a subtype fo 'small
+    1. 'big is a subtype for 'small
     2. Think of: Cat is an Animal and more... 'big is 'small and more.
 
 If someone wants a reference for 'small, they mean a reference that lives
@@ -50,17 +51,43 @@ Lifetime is not a type... so to apply liftime subtyping...
 
 ## Variance
 
-Type constructor (F<T>) -> any generic type with unbound arguments.
+A property that type constructors have with respect to their arguments.
+
+Type constructor (F<T>) -> any generic type with unbound arguments. Examples:
 
     * Vec: type T
     * & and &mut: lifetime and pointer to type
 
-Three variance in Rust
+A type contructor F's variance is how the subtyping of its inputs affect the subtyping of its outputs.
+
+Give two types: Sub and Super, where...
 
     * Sub is subtype of Super
     * Sub: Super
     * 'big: 'small
+    * Sub outlives Super
+
+Three kinds variances in Rust
 
     1. covariance
+        F<Sub>: F<Super> (subtyping "passes through")
     2. contravariance
+        F<Super>: F<Sub> (subtyping is "inverted")
     3. invariance
+        No subtyping relationship
+
+Table of important variances in Rust
+
+F\<T\>          | 'a        | T             | U
+--------------- | --------- | ------------- | --------
+&'a T           | covariant | covariant     |	
+&'a mut T       | covariant | invariant     |	
+Box\<T\>        |           | covariant     |	
+Vec\<T\>        |           | covariant     |	
+UnsafeCell\<T\> |           | invariant     |	
+Cell\<T\>       |           | invariant     |
+fn(T) -> U      |           | contravariant | covariant
+*const T         |           | covariant     |
+*mut T           |           | invariant     |	
+
+

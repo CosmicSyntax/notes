@@ -90,4 +90,3 @@ fn(T) -> U      |           | contravariant | covariant
 *const T         |           | covariant     |
 *mut T           |           | invariant     |	
 
-
